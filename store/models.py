@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -8,6 +9,7 @@ class Book(models.Model):
     author_name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='my_books')
     readers = models.ManyToManyField(User, through='UserBookRelation', related_name='books')
+    discount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f'ID {self.id}: {self.name}'
