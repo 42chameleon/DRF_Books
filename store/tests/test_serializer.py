@@ -20,10 +20,12 @@ class BookSerializerTestCase(TestCase):
         UserBookRelation.objects.create(user=user1, book=book2, like=True, rate=3)
         UserBookRelation.objects.create(user=user1, book=book2, like=True, rate=5)
         UserBookRelation.objects.create(user=user1, book=book2, like=False)
-        books = Book.objects.all().annotate(price_with_discount=F('price') - F('discount'),
-                                            annotated_likes=Count(Case(When(userbookrelation__like=True, then=1))),
-                                            rating=Avg('userbookrelation__rate')
-                                            ).order_by('id')
+        books = Book.objects.all().annotate(
+            owner_name=F('owner__username'),
+            price_with_discount=F('price') - F('discount'),
+            annotated_likes=Count(Case(When(userbookrelation__like=True, then=1))),
+            rating=Avg('userbookrelation__rate')
+        ).order_by('id')
         data = BooksSerializer(books, many=True).data
         expected_data = [
             {
